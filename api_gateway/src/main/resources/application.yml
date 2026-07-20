@@ -1,0 +1,42 @@
+server:
+  port: 8080
+spring:
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  application:
+    name: api_gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - "*"
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      routes:
+        - id: auth
+          uri: lb://auth
+          predicates:
+            - Path=/animalbarf/auth/**
+        - id: ui # todo ui with lb
+          uri: http://localhost:4200
+          predicates:
+            - Path=/index.html,/*.js,/*.css
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
