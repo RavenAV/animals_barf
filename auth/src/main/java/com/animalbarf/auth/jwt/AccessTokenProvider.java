@@ -1,6 +1,5 @@
 package com.animalbarf.auth.jwt;
 
-import com.animalbarf.auth.domain.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.NonNull;
@@ -32,17 +31,17 @@ public class AccessTokenProvider implements TokenProvider {
     /**
      * Генерирует access-токен для текущего пользователя
      *
-     * @param user Пользователь
+     * @param login Логин пользователя
      * @return Токен
      */
     @Override
-    public String generateToken(User user) {
+    public String generateToken(String login) {
         return Jwts.builder()
-                .subject(user.getLogin())
+                .subject(login)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration))
                 .signWith(secretKey)
-                .claim("username", user.getLogin())
+                .claim("username", login)
                 .compact();
     }
 

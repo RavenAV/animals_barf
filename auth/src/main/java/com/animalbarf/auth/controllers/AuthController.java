@@ -30,15 +30,15 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("token")
+    @PostMapping("tokens")
     public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) {
-        JwtResponse response = authService.getAccessToken(request.getRefreshToken());
+        JwtResponse response = authService.getTokens(request.getRefreshToken());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("refresh")
     public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
-        JwtResponse response = authService.getRefreshToken(request.getRefreshToken());
+        JwtResponse response = authService.refreshToken(request.getRefreshToken());
         return ResponseEntity.ok(response);
     }
 }

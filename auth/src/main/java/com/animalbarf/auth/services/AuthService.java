@@ -6,6 +6,7 @@ import com.animalbarf.auth.pojo.JwtResponse;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,8 +31,17 @@ public class AuthService {
      * @return Пара токенов
      */
     public JwtResponse signIn(@NonNull JwtRequest authRequest) {
-        // TODO ожидает реализации взаимодействия между МС
-        return new JwtResponse(null, null);
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getLogin(), authRequest.getPassword())
+        );
+
+
+        // TODO ожидает реализации взаимодействия между МС - тут сравнение кредов пользователя
+
+
+        String accessToken = accessTokenProvider.generateToken(authRequest.getLogin());
+        String refreshToken = refreshTokenProvider.generateToken(authRequest.getLogin());
+        return new JwtResponse(accessToken, refreshToken);
     }
 
     /**
@@ -41,17 +51,17 @@ public class AuthService {
      * @return Результат регистрации: успешно или нет
      */
     public JwtResponse signUp(@NonNull JwtRequest request) {
-        // TODO ожидает реализации взаимодействия между МС
+        // TODO ожидает реализации взаимодействия между МС - тут не должен возвращать токены
         return new JwtResponse(null, null);
     }
 
     /**
-     * Получение access-токена
+     * Получение токенов
      *
      * @param request Запрос
      * @return Пара токенов
      */
-    public JwtResponse getAccessToken(@NonNull String request) {
+    public JwtResponse getTokens(@NonNull String request) {
         // TODO ожидает реализации взаимодействия между МС
         return new JwtResponse(null, null);
     }
@@ -62,7 +72,7 @@ public class AuthService {
      * @param request Запрос
      * @return Пара токенов с обновленным refresh-токеном
      */
-    public JwtResponse getRefreshToken(@NonNull String request) {
+    public JwtResponse refreshToken(@NonNull String request) {
         // TODO ожидает реализации взаимодействия между МС
         return new JwtResponse(null, null);
     }
