@@ -1,16 +1,27 @@
 package com.animalbarf.auth.services;
 
+import com.animalbarf.auth.jwt.TokenProvider;
 import com.animalbarf.auth.pojo.JwtRequest;
 import com.animalbarf.auth.pojo.JwtResponse;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
     private final AuthenticationManager authenticationManager;
+    private final TokenProvider accessTokenProvider;
+    private final TokenProvider refreshTokenProvider;
+
+
+    public AuthService(AuthenticationManager authenticationManager,
+                       @Qualifier("accessTokenProvider") TokenProvider accessTokenProvider,
+                       @Qualifier("refreshTokenProvider") TokenProvider refreshTokenProvider) {
+        this.authenticationManager = authenticationManager;
+        this.accessTokenProvider = accessTokenProvider;
+        this.refreshTokenProvider = refreshTokenProvider;
+    }
 
     /**
      * Вход в аккаунт
@@ -18,7 +29,7 @@ public class AuthService {
      * @param authRequest Запрос
      * @return Пара токенов
      */
-    public JwtResponse signIn(@NonNull JwtRequest authRequest)  {
+    public JwtResponse signIn(@NonNull JwtRequest authRequest) {
         // TODO ожидает реализации взаимодействия между МС
         return new JwtResponse(null, null);
     }
