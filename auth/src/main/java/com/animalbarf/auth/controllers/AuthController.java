@@ -20,25 +20,25 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<JwtResponse> signIn(@RequestBody JwtRequest request) {
-        JwtResponse token = authService.login(request);
-        return ResponseEntity.ok(token);
+        JwtResponse response = authService.signIn(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("signup")
     public ResponseEntity<JwtResponse> signUp(@RequestBody JwtRequest request) {
-        JwtResponse token = authService.signUp(request);
-        return ResponseEntity.ok(token);
+        JwtResponse response = authService.signUp(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("token")
     public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) {
-        JwtResponse token = authService.getAccessToken(request.getRefreshToken());
-        return ResponseEntity.ok(token);
+        JwtResponse response = authService.getAccessToken(request.getRefreshToken());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("refresh")
     public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
-        JwtResponse token = authService.refresh(request.getRefreshToken());
-        return ResponseEntity.ok(token);
+        JwtResponse response = authService.getRefreshToken(request.getRefreshToken());
+        return ResponseEntity.ok(response);
     }
 }
