@@ -1,0 +1,24 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: auth
+  datasource: # todo database
+    username: postgres
+    password: 1
+    url: "jdbc:postgresql://localhost:1978/microUsers"
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+jwt:
+  secret: # todo в проде вынести в переменные окружения, сейчас тестовые токены :) // Jwts.SIG.HS512.key().build() - самый надежный способ генерации ключа
+    refresh: "qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==" #${JWT_SECRET}
+    access: "zL1HB3Pch05Avfynovxrf/kpF9O2m4NCWKJUjEp27s9J2jEG3ifiKCGylaZ8fDeoONSTJP/wAzKawB8F9rOMNg==" # ${JWT_SECRET}
+  expiration:
+    access: 3600000 # 1 час
+    refresh: 604800000 # 7 дней
+eureka:
+  client:
+    service-url:
+      defaultZone: "http://localhost:8761/eureka/"
