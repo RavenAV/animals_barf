@@ -1,6 +1,6 @@
 package com.animalbarf.auth.services;
 
-import com.animalbarf.auth.jwt.TokenProvider;
+import com.animalbarf.jwt.TokenProvider;
 import com.animalbarf.auth.pojo.JwtRequest;
 import com.animalbarf.auth.pojo.JwtResponse;
 import lombok.NonNull;
