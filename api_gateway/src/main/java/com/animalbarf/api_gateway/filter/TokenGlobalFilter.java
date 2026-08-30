@@ -11,6 +11,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+/**
+ * Фильтр проверки токена до допуска к МС
+ */
 @Order(0)
 @Component
 public class TokenGlobalFilter implements GlobalFilter {
@@ -26,6 +29,8 @@ public class TokenGlobalFilter implements GlobalFilter {
         if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
         }
+
+
         return null;
     }
 }
