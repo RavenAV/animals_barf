@@ -15,7 +15,6 @@ public class AuthService {
     private final TokenProvider accessTokenProvider;
     private final TokenProvider refreshTokenProvider;
 
-
     public AuthService(AuthenticationManager authenticationManager,
                        @Qualifier("accessTokenProvider") TokenProvider accessTokenProvider,
                        @Qualifier("refreshTokenProvider") TokenProvider refreshTokenProvider) {
