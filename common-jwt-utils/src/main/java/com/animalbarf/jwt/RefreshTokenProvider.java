@@ -13,15 +13,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Slf4j
-@Component
-@Qualifier("refreshTokenProvider")
 public class RefreshTokenProvider implements TokenProvider {
     private final SecretKey secretKey;
     private final long tokenExpiration;
 
     public RefreshTokenProvider(
-            @Value("${jwt.secret.refresh}") String secret,
-            @Value("${jwt.expiration.refresh:604800000}") long expiration
+            String secret,
+            long expiration
     ) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.tokenExpiration = expiration;
