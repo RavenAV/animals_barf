@@ -1,4 +1,4 @@
-package com.animalbarf.auth.jwt;
+package com.animalbarf.jwt;
 
 import io.jsonwebtoken.Claims;
 
