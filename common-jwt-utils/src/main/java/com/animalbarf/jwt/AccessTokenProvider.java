@@ -13,16 +13,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Slf4j
-@Component
-@Qualifier("accessTokenProvider")
 public class AccessTokenProvider implements TokenProvider {
     private final SecretKey secretKey;
     private final long tokenExpiration;
 
 
     public AccessTokenProvider(
-            @Value("${jwt.secret.access}") String accessSecret,
-            @Value("${jwt.expiration.access:3600000}") long accessTokenExpiration
+            String accessSecret,
+            long accessTokenExpiration
     ) {
         this.secretKey = Keys.hmacShaKeyFor(accessSecret.getBytes(StandardCharsets.UTF_8));
         this.tokenExpiration = accessTokenExpiration;
