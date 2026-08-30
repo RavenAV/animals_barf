@@ -68,9 +68,9 @@ public class RefreshTokenProvider implements TokenProvider {
     }
 
     @Override
-    public Claims extractClaims(String token, SecretKey secret) {
+    public Claims extractClaims(String token) {
         return Jwts.parser()
-                .verifyWith(secret)
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
