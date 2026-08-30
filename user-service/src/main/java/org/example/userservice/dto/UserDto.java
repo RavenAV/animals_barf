@@ -1,15 +1,12 @@
 package org.example.userservice.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+public record UserDto (
+    Long id,
+    String firstName,
+    String lastName,
+    String middleName,
+    String email,
+    Boolean enabled
+) {
 
-@Getter
-@Setter
-public class UserDto {
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private String middleName;
-    private String email;
-    private Boolean enabled;
 }
