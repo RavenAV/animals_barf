@@ -2,32 +2,29 @@ package com.animalbarf.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Slf4j
-public class AccessTokenProvider implements TokenProvider {
-    private final SecretKey secretKey;
-    private final long tokenExpiration;
+public abstract class AbstractTokenService implements TokenProvider {
+    protected final SecretKey secretKey;
+    protected final long tokenExpiration;
 
-
-    public AccessTokenProvider(
-            String accessSecret,
-            long accessTokenExpiration
+    public AbstractTokenService(
+            String secret,
+            long expiration
     ) {
-        this.secretKey = Keys.hmacShaKeyFor(accessSecret.getBytes(StandardCharsets.UTF_8));
-        this.tokenExpiration = accessTokenExpiration;
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.tokenExpiration = expiration;
     }
 
+    protected abstract String getTokenName();
+
     /**
-     * Генерирует access-токен для текущего пользователя
+     * Генерирует токен для текущего пользователя
      *
      * @param login Логин пользователя
      * @return Токен
@@ -39,18 +36,17 @@ public class AccessTokenProvider implements TokenProvider {
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration))
                 .signWith(secretKey)
-                .claim("username", login)
                 .compact();
     }
 
     /**
-     * Проверка access-токена
+     * Проверка токена
      *
      * @param token Токен
      * @return Флаг валидности токена
      */
     @Override
-    public Boolean validateToken(@NonNull String token) {
+    public Boolean validateToken(String token) {
         try {
             Jwts.parser()
                     .verifyWith(secretKey)
@@ -58,17 +54,22 @@ public class AccessTokenProvider implements TokenProvider {
                     .parseSignedClaims(token);
             return true;
         } catch (ExpiredJwtException exc) {
-            log.error("Access token expired", exc);
+            log.error("Срок действия {}-токена истёк", getTokenName(), exc);
         } catch (UnsupportedJwtException exc) {
-            log.error("Unsupported JWT-Access", exc);
+            log.error("Неподдерживаемый формат {}-токена", getTokenName(), exc);
         } catch (MalformedJwtException exc) {
-            log.error("Malformed  JWT-Access", exc);
+            log.error("Некорректный {}-токен", getTokenName(), exc);
         } catch (Exception exc) {
-            log.error("Invalid access token", exc);
+            log.error("Не удалось проверить {}-токен", getTokenName(), exc);
         }
         return false;
     }
 
+    /**
+     * Получение данных из токена
+     * @param token Токен
+     * @return Данные из токена
+     */
     @Override
     public Claims extractClaims(String token) {
         return Jwts.parser()
