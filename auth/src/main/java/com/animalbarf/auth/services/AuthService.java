@@ -61,7 +61,7 @@ public class AuthService {
      * @return Пара токенов
      */
     public JwtResponse getTokens(@NonNull String request) {
-        // TODO ожидает реализации взаимодействия между МС
+        // TODO ожидает реализации взаимодействия между МС - вынесено в библиотеку?
         return new JwtResponse(null, null);
     }
 
@@ -72,7 +72,7 @@ public class AuthService {
      * @return Пара токенов с обновленным refresh-токеном
      */
     public JwtResponse refreshToken(@NonNull String request) {
-        // TODO ожидает реализации взаимодействия между МС
+        // TODO ожидает реализации взаимодействия между МС - вынесено в библиотеку?
         return new JwtResponse(null, null);
     }
 }
