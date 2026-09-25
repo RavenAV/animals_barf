@@ -1,11 +1,11 @@
 package org.example.userservice.controller;
 
+import com.animalbarf.apicontracts.user.CreateUserDto;
+import com.animalbarf.apicontracts.user.UpdateUserDto;
+import com.animalbarf.apicontracts.user.UserAuthDto;
+import com.animalbarf.apicontracts.user.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.userservice.dto.CreateUserDto;
-import org.example.userservice.dto.UpdateUserDto;
-import org.example.userservice.dto.UserAuthDto;
-import org.example.userservice.dto.UserDto;
 import org.example.userservice.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

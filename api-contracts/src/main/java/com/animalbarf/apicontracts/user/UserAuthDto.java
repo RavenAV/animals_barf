@@ -1,4 +1,4 @@
-package org.example.userservice.dto;
+package com.animalbarf.apicontracts.user;
 
 public record UserAuthDto(
         Long id,

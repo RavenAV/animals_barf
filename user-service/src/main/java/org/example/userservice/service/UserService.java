@@ -1,11 +1,11 @@
 package org.example.userservice.service;
 
+import com.animalbarf.apicontracts.user.CreateUserDto;
+import com.animalbarf.apicontracts.user.UpdateUserDto;
+import com.animalbarf.apicontracts.user.UserAuthDto;
+import com.animalbarf.apicontracts.user.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.example.userservice.domain.User;
-import org.example.userservice.dto.CreateUserDto;
-import org.example.userservice.dto.UpdateUserDto;
-import org.example.userservice.dto.UserAuthDto;
-import org.example.userservice.dto.UserDto;
 import org.example.userservice.exceptions.EmailAlreadyExistsException;
 import org.example.userservice.exceptions.UserNotFoundException;
 import org.example.userservice.repository.IUserRepository;
