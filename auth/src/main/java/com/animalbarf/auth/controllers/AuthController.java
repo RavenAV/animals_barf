@@ -23,8 +23,7 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<JwtResponse> signIn(@RequestBody JwtRequest request) {
-        JwtResponse response = authService.signIn(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(authService.signIn(request));
     }
 
     @PostMapping("signup")
@@ -32,15 +31,8 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(request));
     }
 
-    @PostMapping("tokens")
-    public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) {
-        JwtResponse response = authService.getTokens(request.getRefreshToken());
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("refresh")
     public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
-        JwtResponse response = authService.refreshToken(request.getRefreshToken());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(authService.refreshToken(request));
     }
 }

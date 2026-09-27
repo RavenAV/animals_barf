@@ -1,15 +1,20 @@
 package com.animalbarf.auth.services;
 
 import com.animalbarf.apicontracts.user.CreateUserDto;
+import com.animalbarf.apicontracts.user.UserAuthDto;
 import com.animalbarf.apicontracts.user.UserDto;
+import com.animalbarf.auth.pojo.RefreshJwtRequest;
+import com.animalbarf.exceptions.InvalidTokenException;
 import com.animalbarf.jwt.TokenProvider;
 import com.animalbarf.auth.pojo.JwtRequest;
 import com.animalbarf.auth.pojo.JwtResponse;
+import jakarta.validation.Valid;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class AuthService {
@@ -39,7 +44,7 @@ public class AuthService {
         );
 
 
-        // TODO ожидает реализации взаимодействия между МС - тут сравнение кредов пользователя
+        // TODO тут сравнение кредов пользователя
 
 
         String accessToken = accessTokenProvider.generateToken(authRequest.getLogin());
@@ -58,24 +63,25 @@ public class AuthService {
     }
 
     /**
-     * Получение токенов
-     *
-     * @param request Запрос
-     * @return Пара токенов
-     */
-    public JwtResponse getTokens(@NonNull String request) {
-        // TODO ожидает реализации взаимодействия между МС - вынесено в библиотеку?
-        return new JwtResponse(null, null);
-    }
-
-    /**
      * Обновление refresh-токена
      *
-     * @param request Запрос
+     * @param request Refresh-токен
      * @return Пара токенов с обновленным refresh-токеном
      */
-    public JwtResponse refreshToken(@NonNull String request) {
-        // TODO ожидает реализации взаимодействия между МС - вынесено в библиотеку?
-        return new JwtResponse(null, null);
+    public JwtResponse refreshToken(@RequestBody @Valid RefreshJwtRequest request) {
+        String refreshToken = request.getRefreshToken();
+        // Валидация токена
+        if (!refreshTokenProvider.validateToken(refreshToken)) {
+            throw new InvalidTokenException("Invalid or expired refresh token");
+        }
+
+        String login = refreshTokenProvider.extractClaims(refreshToken).getSubject();
+        UserAuthDto user = userService.getForAuthentication(login);
+
+        // Генерация новой пары токенов
+        String newAccess  = accessTokenProvider.generateToken(user.email());
+        String newRefresh = refreshTokenProvider.generateToken(user.email());
+
+        return new JwtResponse(newAccess, newRefresh);
     }
 }
