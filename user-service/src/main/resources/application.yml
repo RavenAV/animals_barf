@@ -3,10 +3,10 @@ server:
 spring:
   application:
     name: user-service
-  datasource: # todo database
+  datasource:
     username: postgres
-    password: 1
-    url: "jdbc:postgresql://localhost:5432/microUsers"
+    password: postgres
+    url: "jdbc:postgresql://localhost:5432/users"
   jpa:
     show-sql: true
     hibernate:
