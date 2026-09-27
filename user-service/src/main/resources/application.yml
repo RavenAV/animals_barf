@@ -1,0 +1,17 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: user-service
+  datasource: # todo database
+    username: postgres
+    password: 1
+    url: "jdbc:postgresql://localhost:1978/microUsers"
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+eureka:
+  client:
+    service-url:
+      defaultZone: "http://localhost:8761/eureka/"
