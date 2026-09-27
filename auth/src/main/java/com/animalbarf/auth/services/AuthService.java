@@ -1,5 +1,7 @@
 package com.animalbarf.auth.services;
 
+import com.animalbarf.apicontracts.user.CreateUserDto;
+import com.animalbarf.apicontracts.user.UserDto;
 import com.animalbarf.jwt.TokenProvider;
 import com.animalbarf.auth.pojo.JwtRequest;
 import com.animalbarf.auth.pojo.JwtResponse;
@@ -14,13 +16,15 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider accessTokenProvider;
     private final TokenProvider refreshTokenProvider;
+    private final UserService userService;
 
     public AuthService(AuthenticationManager authenticationManager,
                        @Qualifier("accessTokenProvider") TokenProvider accessTokenProvider,
-                       @Qualifier("refreshTokenProvider") TokenProvider refreshTokenProvider) {
+                       @Qualifier("refreshTokenProvider") TokenProvider refreshTokenProvider, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.accessTokenProvider = accessTokenProvider;
         this.refreshTokenProvider = refreshTokenProvider;
+        this.userService = userService;
     }
 
     /**
@@ -49,9 +53,8 @@ public class AuthService {
      * @param request Запрос
      * @return Результат регистрации: успешно или нет
      */
-    public JwtResponse signUp(@NonNull JwtRequest request) {
-        // TODO ожидает реализации взаимодействия между МС - тут не должен возвращать токены
-        return new JwtResponse(null, null);
+    public UserDto signUp(@NonNull CreateUserDto request) {
+        return userService.create(request);
     }
 
     /**
