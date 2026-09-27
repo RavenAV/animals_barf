@@ -3,9 +3,9 @@ server:
 spring:
   application:
     name: user-service
-  datasource: # todo database
+  datasource:
     username: postgres
-    password: 1
+    password: postgres
     url: "jdbc:postgresql://localhost:5432/microUsers"
   jpa:
     show-sql: true
