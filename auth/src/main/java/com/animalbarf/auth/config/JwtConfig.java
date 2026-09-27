@@ -13,13 +13,13 @@ public class JwtConfig {
     public TokenProvider accessTokenProvider(
             @Value("${jwt.secret.access}") String secret,
             @Value("${jwt.expiration.access:3600000}") long expiration) {
-        return new AccessTokenProvider(secret, expiration);
+        return new AccessTokenService(secret, expiration);
     }
 
     @Bean("refreshTokenProvider")
     public TokenProvider refreshTokenProvider(
             @Value("${jwt.secret.refresh}") String secret,
             @Value("${jwt.expiration.refresh:86400000}") long expiration) {
-        return new RefreshTokenProvider(secret, expiration);
+        return new RefreshTokenService(secret, expiration);
     }
 }
