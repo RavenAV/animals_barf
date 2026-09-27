@@ -6,7 +6,7 @@ spring:
   datasource: # todo database
     username: postgres
     password: 1
-    url: "jdbc:postgresql://localhost:1978/microUsers"
+    url: "jdbc:postgresql://localhost:5432/microUsers"
   jpa:
     show-sql: true
     hibernate:
