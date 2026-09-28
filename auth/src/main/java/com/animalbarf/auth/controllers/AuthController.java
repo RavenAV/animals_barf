@@ -6,6 +6,7 @@ import com.animalbarf.auth.pojo.JwtRequest;
 import com.animalbarf.auth.pojo.JwtResponse;
 import com.animalbarf.auth.pojo.RefreshJwtRequest;
 import com.animalbarf.auth.services.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,23 +16,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<JwtResponse> signIn(@RequestBody JwtRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.signIn(request));
     }
 
-    @PostMapping("signup")
-    public ResponseEntity<UserDto> signUp(@RequestBody CreateUserDto request) {
+    @PostMapping("/signup")
+    public ResponseEntity<UserDto> signUp(@RequestBody @Valid CreateUserDto request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(request));
     }
 
-    @PostMapping("refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.refreshToken(request));
     }
