@@ -3,37 +3,58 @@ server:
 spring:
   main:
     web-application-type: reactive
-    allow-bean-definition-overriding: true
+#    allow-bean-definition-overriding: true
   application:
     name: api_gateway
   cloud:
     gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins:
-              - "*"
-            allowedMethods:
-              - "*"
-            allowedHeaders:
-              - "*"
-            exposedHeaders:
-              - "*"
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-      routes:
-        - id: auth
-          uri: lb://auth
-          predicates:
-            - Path=/animalbarf/auth/**
-        - id: ui # todo ui with lb
-          uri: http://localhost:4200
-          predicates:
-            - Path=/index.html,/*.js,/*.css
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins:
+                  - "*"
+                allowedMethods:
+                  - "*"
+                allowedHeaders:
+                  - "*"
+                exposedHeaders:
+                  - "*"
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+          routes:
+            - id: auth
+              uri: lb://auth
+              predicates:
+                - Path=/api/auth/**
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/users/**
+            - id: ui # todo ui with lb
+              uri: http://localhost:4200
+              predicates:
+                - Path=/index.html,/*.js,/*.css
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway,health,info
+  endpoint:
+    gateway:
+      enabled: true
+jwt:
+  secret: # todo в проде вынести в переменные окружения, сейчас тестовые токены :)
+    refresh: "qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==" #${JWT_SECRET}
+    access: "zL1HB3Pch05Avfynovxrf/kpF9O2m4NCWKJUjEp27s9J2jEG3ifiKCGylaZ8fDeoONSTJP/wAzKawB8F9rOMNg==" # ${JWT_SECRET}
+  expiration:
+    access: 3600000 # 1 час
+    refresh: 604800000 # 7 дней
 eureka:
   client:
     serviceUrl:

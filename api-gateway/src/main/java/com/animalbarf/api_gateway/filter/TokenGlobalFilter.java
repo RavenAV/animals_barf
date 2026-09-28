@@ -2,7 +2,6 @@ package com.animalbarf.api_gateway.filter;
 
 import com.animalbarf.jwt.TokenProvider;
 import io.jsonwebtoken.Claims;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -28,7 +27,7 @@ import java.util.List;
 public class TokenGlobalFilter implements GlobalFilter {
 
     private final TokenProvider accessTokenProvider;
-    private final List<String> PUBLIC_PATHS = List.of("/login", "/signup");
+    private final List<String> PUBLIC_PATHS = List.of("login", "signup");
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -37,8 +36,9 @@ public class TokenGlobalFilter implements GlobalFilter {
         ServerHttpResponse response = exchange.getResponse();
         String path = request.getURI().getPath();
 
+        String[] parts = path.split("/");
         // Пропускаем публичные ключи
-        if (isPublicPath(path)) {
+        if (isPublicPath(parts[parts.length - 1])) {
             return chain.filter(exchange);
         }
 
@@ -88,7 +88,7 @@ public class TokenGlobalFilter implements GlobalFilter {
      * @return флаг общедоступности
      */
     private boolean isPublicPath(String path) {
-        return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+        return PUBLIC_PATHS.contains(path);
     }
 
     private Mono<Void> handleUnauthorized(ServerHttpResponse response, String message) {
