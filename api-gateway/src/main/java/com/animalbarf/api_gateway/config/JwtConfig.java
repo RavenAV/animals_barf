@@ -12,7 +12,7 @@ public class JwtConfig {
     @Bean("accessTokenProvider")
     public TokenProvider accessTokenProvider(
             @Value("${jwt.secret.access}") String secret,
-            @Value("${jwt.expiration.access:3600000}") long expiration) {
+            @Value("${jwt.expiration.access:120000}") long expiration) {
         return new AccessTokenService(secret, expiration);
     }
 }
