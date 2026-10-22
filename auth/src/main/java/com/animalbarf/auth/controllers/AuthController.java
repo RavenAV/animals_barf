@@ -2,10 +2,11 @@ package com.animalbarf.auth.controllers;
 
 import com.animalbarf.apicontracts.user.CreateUserDto;
 import com.animalbarf.apicontracts.user.UserDto;
-import com.animalbarf.auth.pojo.JwtRequest;
-import com.animalbarf.auth.pojo.JwtResponse;
-import com.animalbarf.auth.pojo.RefreshJwtRequest;
+import com.animalbarf.auth.pojo.LoginRequest;
+import com.animalbarf.auth.pojo.LoginResponse;
+import com.animalbarf.auth.pojo.RefreshTokenRequest;
 import com.animalbarf.auth.services.AuthService;
+import com.animalbarf.exceptions.InvalidTokenException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> signIn(@RequestBody JwtRequest request) {
+    public ResponseEntity<LoginResponse> signIn(@RequestBody LoginRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.signIn(request));
     }
 
@@ -33,12 +34,18 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.refreshToken(request));
+    public ResponseEntity<?> getNewRefreshToken(@RequestBody @Valid RefreshTokenRequest request) {
+        try {
+            LoginResponse response = authService.refreshToken(request);
+            return ResponseEntity.ok(response);
+        } catch (InvalidTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<JwtResponse> logout(@RequestBody RefreshJwtRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.logout(request));
+    public ResponseEntity<Void> logout(@RequestBody RefreshTokenRequest request) {
+        authService.logout(request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
