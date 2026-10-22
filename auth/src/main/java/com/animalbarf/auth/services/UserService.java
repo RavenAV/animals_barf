@@ -15,5 +15,5 @@ public interface UserService {
     UserDto create(@RequestBody CreateUserDto request);
 
     @GetMapping("/internal/auth")
-    UserAuthDto getForAuthentication(@RequestParam String login);
+    UserAuthDto getForAuthentication(@RequestParam("email") String email);
 }

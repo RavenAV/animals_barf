@@ -1,14 +1,13 @@
 package com.animalbarf.auth.services;
 
 import com.animalbarf.apicontracts.user.CreateUserDto;
-import com.animalbarf.apicontracts.user.UserAuthDto;
 import com.animalbarf.apicontracts.user.UserDto;
-import com.animalbarf.auth.pojo.RefreshJwtRequest;
+import com.animalbarf.auth.pojo.RefreshTokenRequest;
 import com.animalbarf.auth.revokeTokens.RevokeUtils;
 import com.animalbarf.exceptions.InvalidTokenException;
 import com.animalbarf.jwt.TokenProvider;
-import com.animalbarf.auth.pojo.JwtRequest;
-import com.animalbarf.auth.pojo.JwtResponse;
+import com.animalbarf.auth.pojo.LoginRequest;
+import com.animalbarf.auth.pojo.LoginResponse;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,22 +42,16 @@ public class AuthService {
      * @param authRequest Запрос
      * @return Пара токенов
      */
-    public JwtResponse signIn(@NonNull JwtRequest authRequest) {
+    public LoginResponse signIn(@NonNull LoginRequest authRequest) {
+        String login = authRequest.getLogin();
+        String password = authRequest.getPassword();
+
+        // Аутентификация
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getLogin(), authRequest.getPassword())
+                new UsernamePasswordAuthenticationToken(login, password)
         );
 
-
-        // TODO тут сравнение кредов пользователя
-
-
-        String accessToken = accessTokenProvider.generateToken(authRequest.getLogin());
-        String refreshToken = refreshTokenProvider.generateToken(authRequest.getLogin());
-
-        // Сохранение токена в базу
-        // revokeUtils.saveToken(token, userId)
-
-        return new JwtResponse(accessToken, refreshToken);
+        return generateTokens(login);
     }
 
     /**
@@ -77,33 +70,43 @@ public class AuthService {
      * @param request Refresh-токен
      * @return Пара токенов с обновленным refresh-токеном
      */
-    public JwtResponse refreshToken(@RequestBody @Valid RefreshJwtRequest request) {
+    public LoginResponse refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
 
-        // Валидация токена на подпись и срок && отозван ли он
-        if (!refreshTokenProvider.validateToken(refreshToken) && revokeUtils.checkRefreshToken(refreshToken)) {
+        // Валидация токена на подпись и срок || отозван ли он
+        if (!refreshTokenProvider.validateToken(refreshToken) || revokeUtils.checkRefreshToken(refreshToken)) {
             throw new InvalidTokenException("Invalid or expired refresh token");
         }
 
         String login = refreshTokenProvider.extractClaims(refreshToken).getSubject();
-        UserAuthDto user = userService.getForAuthentication(login);
 
         // Отзываем устаревший токен
         revokeUtils.revokeToken(refreshToken);
-
-        // Генерация новой пары токенов
-        String newAccess = accessTokenProvider.generateToken(user.email());
-        String newRefresh = refreshTokenProvider.generateToken(user.email());
-
-        // Сохранение токена в базу
-        revokeUtils.saveToken(newRefresh, user.id());
-
-        return new JwtResponse(newAccess, newRefresh);
+        return generateTokens(login);
     }
 
-    public JwtResponse logout(RefreshJwtRequest request) {
-        // Отзываем токен при разлогине
+    /**
+     * Отзываем токен при выходе
+     *
+     * @param request Рефреш-токен
+     */
+    public void logout(RefreshTokenRequest request) {
         revokeUtils.revokeToken(request.getRefreshToken());
-        return null;
+    }
+
+    /**
+     * Запуск генерации токенов для конкретного пользователя
+     *
+     * @param login Уникальный идентификатор пользователя (email)
+     * @return Пара новых токенов
+     */
+    private LoginResponse generateTokens(String login) {
+        // Генерация токенов
+        String access = accessTokenProvider.generateToken(login);
+        String refresh = refreshTokenProvider.generateToken(login);
+
+        // Сохранение токена в базу
+        revokeUtils.saveToken(refresh, login);
+        return new LoginResponse(access, refresh);
     }
 }

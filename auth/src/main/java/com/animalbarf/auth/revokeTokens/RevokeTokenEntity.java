@@ -5,14 +5,10 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class RevokeTokenEntity {
-    @Setter
-    @Getter
     private String token;
-    @Setter
-    @Getter
-    private String userId;
-    @Setter
-    @Getter
+    private String login;
     private LocalDateTime revokedAt; // дата отзыва, если отозван
 }

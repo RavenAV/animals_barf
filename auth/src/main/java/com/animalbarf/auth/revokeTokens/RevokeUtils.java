@@ -1,9 +1,12 @@
 package com.animalbarf.auth.revokeTokens;
 
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class RevokeUtils {
     public final Map<String, RevokeTokenEntity> tokens = new ConcurrentHashMap<>();
 
@@ -12,10 +15,10 @@ public class RevokeUtils {
      *
      * @param token Токен
      */
-    public void saveToken(String token, String userId) {
+    public void saveToken(String token, String login) {
         RevokeTokenEntity entity = new RevokeTokenEntity();
         entity.setToken(token);
-        entity.setUserId(userId);
+        entity.setLogin(login);
         entity.setRevokedAt(null);
         tokens.put(token, entity);
     }
@@ -33,7 +36,7 @@ public class RevokeUtils {
         if (entity == null) return false;
 
         // Токен отозван (logout)
-        return entity.getRevokedAt() == null;
+        return entity.getRevokedAt() != null;
     }
 
     /**
