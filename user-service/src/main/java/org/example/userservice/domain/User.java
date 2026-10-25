@@ -3,6 +3,9 @@ package org.example.userservice.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(
         name = "users",
@@ -63,4 +66,19 @@ public class User {
     @Column(nullable = false)
     @Builder.Default
     private Boolean enabled = true;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = {
+                    @UniqueConstraint(
+                            name = "uk_user_roles",
+                            columnNames = {"user_id", "role_id"}
+                    )
+            }
+    )
+    @Builder.Default
+    private Set<Role> roles = new HashSet<>();
 }

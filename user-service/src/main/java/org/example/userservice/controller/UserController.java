@@ -1,11 +1,9 @@
 package org.example.userservice.controller;
 
-import com.animalbarf.apicontracts.user.CreateUserDto;
-import com.animalbarf.apicontracts.user.UpdateUserDto;
-import com.animalbarf.apicontracts.user.UserAuthDto;
-import com.animalbarf.apicontracts.user.UserDto;
+import com.animalbarf.apicontracts.user.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.userservice.service.RoleService;
 import org.example.userservice.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +16,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final RoleService roleService;
 
     /**
      * Создание пользователя.
@@ -75,5 +74,29 @@ public class UserController {
     @GetMapping("/internal/auth")
     public UserAuthDto getForAuthentication(@RequestParam String email) {
         return userService.getForAuthentication(email);
+    }
+
+    // Получить роли пользователя
+    @GetMapping("/{userId}/roles")
+    public UserRolesDto getUserRoles(@PathVariable Long userId) {
+        return roleService.getUserRoles(userId);
+    }
+
+    // Назначить роль пользователю
+    @PutMapping("/{userId}/roles/{roleId}")
+    public UserRolesDto assignRole(
+            @PathVariable Long userId,
+            @PathVariable Long roleId
+    ) {
+        return roleService.assignRole(userId, roleId);
+    }
+
+    // Снять роль с пользователя
+    @DeleteMapping("/{userId}/roles/{roleId}")
+    public UserRolesDto removeRole(
+            @PathVariable Long userId,
+            @PathVariable Long roleId
+    ) {
+        return roleService.removeRole(userId, roleId);
     }
 }
