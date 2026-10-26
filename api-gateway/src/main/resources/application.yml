@@ -5,7 +5,7 @@ spring:
     web-application-type: reactive
 #    allow-bean-definition-overriding: true
   application:
-    name: api_gateway
+    name: api-gateway
   cloud:
     gateway:
       server:
