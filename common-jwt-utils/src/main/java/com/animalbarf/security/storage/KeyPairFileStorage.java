@@ -12,6 +12,7 @@ public class KeyPairFileStorage implements KeyPairWriter {
         this.directory = directory;
     }
 
+    @Override
     public void save(KeyPair keyPair, String prefix) throws IOException {
         if (!Files.exists(directory)) {
             Files.createDirectories(directory);

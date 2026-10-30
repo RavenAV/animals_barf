@@ -7,6 +7,7 @@ import java.security.spec.ECGenParameterSpec;
 
 public class KeyGeneratorECDSA implements KeyGenerator {
 
+    @Override
     public KeyPair generateKeyPair() {
         try {
             KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
