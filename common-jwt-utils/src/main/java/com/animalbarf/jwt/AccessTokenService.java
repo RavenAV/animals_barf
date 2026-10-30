@@ -2,6 +2,8 @@ package com.animalbarf.jwt;
 
 import io.jsonwebtoken.*;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Date;
 
 /**
@@ -10,10 +12,11 @@ import java.util.Date;
 public class AccessTokenService extends AbstractTokenService {
 
     public AccessTokenService(
-            String secret,
+            PrivateKey privateKey,
+            PublicKey publicKey,
             long expiration
     ) {
-        super(secret, expiration);
+        super(privateKey, publicKey, expiration);
     }
 
     @Override
@@ -33,7 +36,7 @@ public class AccessTokenService extends AbstractTokenService {
                 .subject(login)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration))
-                .signWith(secretKey)
+                .signWith(privateKey, Jwts.SIG.ES256)
                 .claim("username", login)
                 .compact();
     }
