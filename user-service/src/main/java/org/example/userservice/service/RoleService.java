@@ -27,12 +27,12 @@ public class RoleService {
     public List<RoleDto> getAllRoles() {
         return roleRepository.findAll()
                 .stream()
-                .map(this::toResponse)
+                .map(this::toRoleDto)
                 .toList();
     }
 
     public RoleDto getRoleById(Long roleId) {
-        return toResponse(findRole(roleId));
+        return toRoleDto(findRole(roleId));
     }
 
     @Transactional
@@ -51,7 +51,7 @@ public class RoleService {
                 .description(request.description())
                 .build();
 
-        return toResponse(roleRepository.save(role));
+        return toRoleDto(roleRepository.save(role));
     }
 
     @Transactional
@@ -71,7 +71,7 @@ public class RoleService {
         role.setName(name);
         role.setDescription(request.description());
 
-        return toResponse(roleRepository.save(role));
+        return toRoleDto(roleRepository.save(role));
     }
 
     @Transactional
@@ -97,7 +97,7 @@ public class RoleService {
 
         List<RoleDto> roles = user.getRoles()
                 .stream()
-                .map(this::toResponse)
+                .map(this::toRoleDto)
                 .toList();
 
         return new UserRolesDto(userId, roles);
@@ -152,7 +152,7 @@ public class RoleService {
         return name.trim().toUpperCase(Locale.ROOT);
     }
 
-    private RoleDto toResponse(Role role) {
+    private RoleDto toRoleDto(Role role) {
         return new RoleDto(
                 role.getId(),
                 role.getName(),

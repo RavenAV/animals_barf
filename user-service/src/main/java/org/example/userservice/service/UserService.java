@@ -1,10 +1,12 @@
 package org.example.userservice.service;
 
+import com.animalbarf.apicontracts.role.RoleDto;
 import com.animalbarf.apicontracts.user.CreateUserDto;
 import com.animalbarf.apicontracts.user.UpdateUserDto;
 import com.animalbarf.apicontracts.user.UserAuthDto;
 import com.animalbarf.apicontracts.user.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.example.userservice.domain.Role;
 import org.example.userservice.domain.User;
 import org.example.userservice.exceptions.EmailAlreadyExistsException;
 import org.example.userservice.exceptions.UserNotFoundException;
@@ -127,7 +129,6 @@ public class UserService {
 
     /**
      * Метод специально для Auth Service.
-     * <p>
      * Здесь возвращается passwordHash.
      */
     @Transactional(readOnly = true)
@@ -140,7 +141,11 @@ public class UserService {
                 user.getId(),
                 user.getEmail(),
                 user.getPasswordHash(),
-                user.getEnabled()
+                user.getEnabled(),
+                user.getRoles()
+                        .stream()
+                        .map(this::toRoleDto)
+                        .toList()
         );
     }
 
@@ -159,6 +164,14 @@ public class UserService {
                 user.getMiddleName(),
                 user.getEmail(),
                 user.getEnabled()
+        );
+    }
+
+    private RoleDto toRoleDto(Role role) {
+        return new RoleDto(
+                role.getId(),
+                role.getName(),
+                role.getDescription()
         );
     }
 }
