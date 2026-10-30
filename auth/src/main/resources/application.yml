@@ -8,9 +8,13 @@ spring:
     hibernate:
       ddl-auto: update
 jwt:
-  secret: # todo в проде вынести в переменные окружения, сейчас тестовые токены :) // Jwts.SIG.HS512.key().build() - самый надежный способ генерации ключа
-    refresh: "qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==" #${JWT_SECRET}
-    access: "zL1HB3Pch05Avfynovxrf/kpF9O2m4NCWKJUjEp27s9J2jEG3ifiKCGylaZ8fDeoONSTJP/wAzKawB8F9rOMNg==" # ${JWT_SECRET}
+  secret: # todo в проде вынести в переменные окружения
+    access:
+      private: "file:D:/DevelopJava/animals_barf/common-jwt-utils/access_private.key"
+      public: "file:D:/DevelopJava/animals_barf/common-jwt-utils/access_public.key"
+    refresh:
+      private: "file:D:/DevelopJava/animals_barf/common-jwt-utils/refresh_private.key"
+      public: "file:D:/DevelopJava/animals_barf/common-jwt-utils/refresh_public.key"
   expiration:
     access: 120000
     refresh: 120000
