@@ -5,6 +5,7 @@ import io.jsonwebtoken.*;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Утилита для работы с access-токеном
@@ -31,13 +32,13 @@ public class AccessTokenService extends AbstractTokenService {
      * @return Токен
      */
     @Override
-    public String generateToken(String login) {
+    public String generateToken(String login, Set<String> roles) {
         return Jwts.builder()
                 .subject(login)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration))
                 .signWith(privateKey, Jwts.SIG.ES256)
-                .claim("username", login)
+                .claim("roles", roles)
                 .compact();
     }
 }
