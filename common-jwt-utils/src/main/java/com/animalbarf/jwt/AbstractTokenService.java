@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.security.*;
 import java.util.Date;
+import java.util.Set;
 
 @Slf4j
 public abstract class AbstractTokenService implements TokenProvider {
@@ -31,11 +32,12 @@ public abstract class AbstractTokenService implements TokenProvider {
      * @return Токен
      */
     @Override
-    public String generateToken(String login) {
+    public String generateToken(String login, Set<String> roles) {
         return Jwts.builder()
                 .subject(login)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration))
+                .claim("roles", roles)
                 .signWith(privateKey, Jwts.SIG.ES256)
                 .compact();
     }
