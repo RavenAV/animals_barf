@@ -13,8 +13,15 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -47,11 +54,15 @@ public class AuthService {
         String password = authRequest.getPassword();
 
         // Аутентификация
-        authenticationManager.authenticate(
+        Authentication authentication =  authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(login, password)
         );
 
-        return generateTokens(login);
+        Set<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+
+        return generateTokens(authentication.getName(), roles);
     }
 
     /**
@@ -79,10 +90,14 @@ public class AuthService {
         }
 
         String login = refreshTokenProvider.extractClaims(refreshToken).getSubject();
+        Object raw = refreshTokenProvider.extractClaims(refreshToken).get("roles");
+        List<String> rolesList = raw instanceof List<?> list
+                ? list.stream().map(String::valueOf).toList()
+                : List.of();
 
         // Отзываем устаревший токен
         revokeUtils.revokeToken(refreshToken);
-        return generateTokens(login);
+        return generateTokens(login, new HashSet<>(rolesList));
     }
 
     /**
@@ -100,10 +115,10 @@ public class AuthService {
      * @param login Уникальный идентификатор пользователя (email)
      * @return Пара новых токенов
      */
-    private LoginResponse generateTokens(String login) {
+    private LoginResponse generateTokens(String login, Set<String> roles) {
         // Генерация токенов
-        String access = accessTokenProvider.generateToken(login);
-        String refresh = refreshTokenProvider.generateToken(login);
+        String access = accessTokenProvider.generateToken(login, roles);
+        String refresh = refreshTokenProvider.generateToken(login, roles);
 
         // Сохранение токена в базу
         revokeUtils.saveToken(refresh, login);
