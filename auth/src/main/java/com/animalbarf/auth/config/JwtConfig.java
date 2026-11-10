@@ -1,6 +1,7 @@
 package com.animalbarf.auth.config;
 
-import com.animalbarf.auth.tokenSecurity.KeyLoader;
+import com.animalbarf.apicontracts.securityKeyLoader.KeyLoader;
+import com.animalbarf.apicontracts.securityKeyLoader.KeyLoaderECDSA;
 import com.animalbarf.jwt.*;
 import com.animalbarf.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +18,8 @@ public class JwtConfig {
     @Bean("accessTokenProvider")
     public TokenProvider accessTokenProvider(@Value("${jwt.secret.access.private}") Resource privateKeyResource,
                                              @Value("${jwt.secret.access.public}") Resource publicKeyResource,
-                                             @Value("${jwt.expiration.access:3600000}") long expiration,
-                                             KeyLoader keyLoader) throws Exception {
+                                             @Value("${jwt.expiration.access:3600000}") long expiration) throws Exception {
+        KeyLoader keyLoader = new KeyLoaderECDSA();
         PrivateKey privateKey = keyLoader.loadPrivateKey(privateKeyResource);
         PublicKey publicKey = keyLoader.loadPublicKey(publicKeyResource);
         return new AccessTokenService(privateKey, publicKey, expiration);
@@ -27,8 +28,8 @@ public class JwtConfig {
     @Bean("refreshTokenProvider")
     public TokenProvider refreshTokenProvider(@Value("${jwt.secret.refresh.private}") Resource privateKeyResource,
                                               @Value("${jwt.secret.refresh.public}") Resource publicKeyResource,
-                                              @Value("${jwt.expiration.refresh:86400000}") long expiration,
-                                              KeyLoader keyLoader) throws Exception {
+                                              @Value("${jwt.expiration.refresh:86400000}") long expiration) throws Exception {
+        KeyLoader keyLoader = new KeyLoaderECDSA();
         PrivateKey privateKey = keyLoader.loadPrivateKey(privateKeyResource);
         PublicKey publicKey = keyLoader.loadPublicKey(publicKeyResource);
         return new RefreshTokenService(privateKey, publicKey, expiration);

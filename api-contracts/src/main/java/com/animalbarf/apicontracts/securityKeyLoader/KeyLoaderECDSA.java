@@ -1,4 +1,4 @@
-package com.animalbarf.auth.tokenSecurity;
+package com.animalbarf.apicontracts.securityKeyLoader;
 
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
