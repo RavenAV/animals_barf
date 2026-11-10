@@ -16,7 +16,11 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Фильтр проверки токена до допуска к МС
@@ -58,16 +62,18 @@ public class TokenGlobalFilter implements GlobalFilter {
         try {
             Claims claims = accessTokenProvider.extractClaims(token);
             String username = claims.getSubject();
-            String role = claims.get("role", String.class);
+            Object rawRoles = claims.get("roles");
+            Set<String> roles = rawRoles instanceof Collection<?> c
+                    ? c.stream().map(String::valueOf).collect(Collectors.toCollection(LinkedHashSet::new))
+                    : Set.of();
 
             if (username == null) {
                 return handleUnauthorized(response, "Invalid token: missing user info");
             }
 
-            // 5. Build new request with user headers
             ServerHttpRequest mutatedRequest = request.mutate()
                     .header("X-User-Name", username)
-                    .header("X-User-Role", role != null ? role : "USER")
+                    .header("X-User-Roles", roles.isEmpty() ? "USER" : String.join(",", roles))
                     .header("X-User-Id", claims.get("id", String.class))
                     .build();
 
